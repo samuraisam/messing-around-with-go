@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 	// "compress/bzip2"
 )
 
@@ -79,13 +80,47 @@ func dropTable(tableName string) {
 	}
 }
 
+var LINKS []string = {
+	"http://fah-web.stanford.edu/daily_team_summary.txt.bz2"
+	"http://fah-web.stanford.edu/daily_user_summary.txt.bz2"
+}
+
+func downloadStatsFiles() {
+	db := getDB()
+	defer db.Close()
+
+	for _, val := range LINKS {
+		q := `
+			SELECT download_time 
+			FROM downloads 
+			WHERE link=$1 AND error=NULL ORDER BY download_time ASC
+		`
+		res, err := db.Query(q, val)
+		if result.Next() {
+			// there is at least one row, get the HEAD and make sure that we are not
+			// going to download it more than required
+			var lastModified time.Time
+			err = result.Err()
+			if err != nil {
+				panic(fmt.Sprintf("query error: ", err))
+			}
+			res.Scan(&lastModified)
+		} else {
+			// there are no rows, just get it (first fetch)
+		}
+	}
+}
+
 func main() {
 	createTable("downloads",
 		`CREATE TABLE downloads (
 			id SERIAL, 
+			link text,
 			download_time timestamp,
+			last_modified timestamp with timezone,
 			download_size_bytes int,
 			download_duration float,
 			error text
 		)`)
+	dropTable("downloads")
 }
