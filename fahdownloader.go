@@ -9,6 +9,7 @@ import (
 	// "compress/bzip2"
 )
 
+// load the postgresql driver
 import (
 	_ "github.com/lxn/go-pgsql"
 )
@@ -36,10 +37,13 @@ func dbTableExists(name string) bool {
 	return err != nil && len(msg) > 0
 }
 
-func main() {
-	if dbTableExists("downloads") {
-		fmt.Println("it exists")
-	} else {
-		fmt.Println("it doesnt exist")
+func createTable(tableName string, args string) {
+	if !dbTableExists(tableName) {
+		db := getDB()
+		
 	}
+}
+
+func main() {
+	createTable("download-tracker", "lastDownload timestamp")
 }
