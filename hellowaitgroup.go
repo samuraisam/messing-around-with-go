@@ -1,21 +1,18 @@
 /*
  * This package shows how to use sync.WaitGroup, to wait for a series of urls to download
  * in paralell in their own goroutines.
- * 
- * It is however probably an improper use of WaitGroup, as it seems one should not hope to
- * care much about the value that comes out of your goroutine.
  */
 package main
 
 import (
-	"sync"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
+	"sync"
 )
 
 func main() {
-	var urls = []string {
+	var urls = []string{
 		"http://ssutch.org",
 		"http://reddit.com",
 		"http://news.ycombinator.com",
